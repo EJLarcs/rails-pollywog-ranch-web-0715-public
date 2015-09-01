@@ -1,8 +1,24 @@
+require 'pry'
 class TadpolesController < ApplicationController
   before_action :set_tadpole, only: [:show, :edit, :update, :destroy, :metamorphosize]
 
   # add your metamorphosize action here
-  
+  def metamorphosize
+    @frog = Frog.new(:name => @tadpole.name, :color => @tadpole.color, :pond_id => @tadpole.pond.id)
+    respond_to do |format|
+      if @frog.save
+        #once frog is made, tadpole is destroyed
+        @tadpole.destroy
+        format.html { redirect_to @frog, notice: 'Tadpole was successfully destroyed and frog created!' }
+        #check the name stuff
+        #no need for @frog.show
+      else
+        format.html { render :'/tadpoles/#{tadpole.id}' }
+        #check out the concept of tadpoles/#tadpole.id - go to that tadpoles page
+      end
+    end
+  end
+
   def index
     @tadpoles = Tadpole.all
   end
@@ -39,6 +55,7 @@ class TadpolesController < ApplicationController
       end
     end
   end
+
 
   def destroy
     @tadpole.destroy
